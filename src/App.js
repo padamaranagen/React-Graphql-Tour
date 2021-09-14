@@ -1,20 +1,13 @@
 import React from 'react';
 import './custom.scss';
 import github from './db.js';
-import { useEffect } from 'react';
+import githubQuery from './Query.js';
+import { useEffect, useState, useCallback } from 'react';
 
 export default function App() {
-  useEffect(() => {
-    const githubQuery = {
-      query: `
-      {
-        viewer { 
-          login
-        }
-      }      
-      `
-    };
+  let [userName, setUserName] = useState('');
 
+  const fetchData = useCallback(() => {
     fetch(github.baseURL, {
       method: 'POST',
       headers: github.headers,
@@ -22,12 +15,17 @@ export default function App() {
     })
       .then(response => response.json())
       .then(data => {
+        setUserName(data.data.viewer.login);
         console.log(data.data.viewer.login);
       })
       .catch(err => {
         console.log(err);
       });
-  });
+  }, []);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <div className="App container mt-5">
@@ -35,6 +33,7 @@ export default function App() {
         <i className="bi bi-diagram-2-fill" />
         My Repo
       </h1>
+      <p>Hi {userName}</p>
     </div>
   );
 }
