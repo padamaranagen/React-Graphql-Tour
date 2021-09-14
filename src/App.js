@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from 'react';
 
 export default function App() {
   let [userName, setUserName] = useState('');
+  let [repoList, setRepoList] = useState(null);
 
   const fetchData = useCallback(() => {
     fetch(github.baseURL, {
@@ -15,8 +16,10 @@ export default function App() {
     })
       .then(response => response.json())
       .then(data => {
-        setUserName(data.data.viewer.login);
-        console.log(data.data.viewer.login);
+        const viewer = data.data.viewer;
+        setUserName(viewer.name);
+        setRepoList(viewer.repositories.nodes);
+        // console.log(data.data.viewer.name);
       })
       .catch(err => {
         console.log(err);
